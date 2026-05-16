@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 import Home from "./components/Home"
 import About from "./components/About"
 import Navbar from "./components/Navbar"
@@ -15,7 +17,6 @@ import data from "./recipes.json"
 import './App.css'
 import BMICalculator from './components/BMICalculator.jsx'
 
-// Scrolls to top on every route change
 function RouteScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -57,6 +58,16 @@ function App() {
       </Routes>
       <Footer />
       <ScrollToTop />
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="light"
+      />
     </BrowserRouter>
   )
 }

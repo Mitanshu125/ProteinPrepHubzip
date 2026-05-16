@@ -2,30 +2,29 @@ import express from "express";
 import { config } from "dotenv";
 import cors from "cors";
 import "dotenv/config"
-import  {sendEmail}  from "./utils/sendEmail.js";
+import { sendEmail } from "./utils/sendEmail.js";
 
 const app = express();
 const router = express.Router();
 
-const PORT = process.env.PORT  || 4001
+const PORT = process.env.PORT || 4001
 
 config({ path: "./config.env" });
 
 app.use(
   cors({
     origin: [process.env.FRONTEND_URL],
-    methods: ["POST"],
+    methods: ["POST", "GET"],
     credentials: true,
     allowedHeaders: ["Content-Type"],
   })
 );
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res)=>{
-    res.send("Server is running")
+app.get("/", (req, res) => {
+  res.send("Server is running")
 })
 
 router.post("/send/mail", async (req, res, next) => {
@@ -40,8 +39,8 @@ router.post("/send/mail", async (req, res, next) => {
   }
   try {
     await sendEmail({
-      email: "",
-      subject: "GYM WEBSITE CONTACT",
+      email: process.env.SMTP_MAIL, // ← FIXED: send to your own email
+      subject: `New Message from ${name} - ProteinPrepHub`,
       message,
       userEmail: email,
     });
@@ -50,9 +49,10 @@ router.post("/send/mail", async (req, res, next) => {
       message: "Message Sent Successfully.",
     });
   } catch (error) {
+    console.error("Email error:", error);
     res.status(500).json({
       success: false,
-      message: " Internal Server Error",
+      message: "Internal Server Error",
     });
   }
 });
