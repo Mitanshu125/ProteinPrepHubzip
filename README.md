@@ -3,7 +3,7 @@
 A full-stack nutrition platform for high-protein meal planning, tracking, and recipes.
 
 ## 🌐 Live Demo
-https://proteinprephub2.vercel.app
+https://proteinprephub.vercel.app
 
 ## Features
 - 17 High-protein recipes with nutrition facts
