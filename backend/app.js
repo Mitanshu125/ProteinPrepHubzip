@@ -62,3 +62,10 @@ app.use(router);
 app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
 });
+
+// Keep alive ping
+setInterval(() => {
+  fetch("https://proteinprephubzip.onrender.com")
+    .then(() => console.log("Server kept alive"))
+    .catch(() => console.log("Ping failed"));
+}, 14 * 60 * 1000); // ping every 14 minutes
