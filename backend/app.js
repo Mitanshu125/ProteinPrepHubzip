@@ -1,20 +1,14 @@
 import express from "express";
-import { config } from "dotenv";
 import cors from "cors";
 import "dotenv/config"
 import { sendEmail } from "./utils/sendEmail.js";
-import https from "https";
 
 const app = express();
 const router = express.Router();
 
-const PORT = process.env.PORT || 4001
-
-config({ path: "./config.env" });
-
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL],
+    origin: [process.env.FRONTEND_URL, "http://localhost:5000"],
     methods: ["POST", "GET"],
     credentials: true,
     allowedHeaders: ["Content-Type"],
@@ -28,19 +22,17 @@ app.get("/", (req, res) => {
   res.send("Server is running")
 })
 
-router.post("/send/mail", async (req, res, next) => {
+router.post("/send/mail", async (req, res) => {
   const { name, email, message } = req.body;
   if (!name || !email || !message) {
-    return next(
-      res.status(400).json({
-        success: false,
-        message: "Please provide all details",
-      })
-    );
+    return res.status(400).json({
+      success: false,
+      message: "Please provide all details",
+    });
   }
   try {
     await sendEmail({
-      email: process.env.SMTP_MAIL, // ← FIXED: send to your own email
+      email: process.env.SMTP_MAIL,
       subject: `New Message from ${name} - ProteinPrepHub`,
       message,
       userEmail: email,
@@ -60,15 +52,4 @@ router.post("/send/mail", async (req, res, next) => {
 
 app.use(router);
 
-app.listen(PORT, () => {
-  console.log(`Server listening at port ${PORT}`);
-});
-
-// Keep server alive
-setInterval(() => {
-  https.get("https://proteinprephubzip.onrender.com", (res) => {
-    console.log("Server pinged:", res.statusCode);
-  }).on("error", (err) => {
-    console.log("Ping failed:", err.message);
-  });
-}, 14 * 60 * 1000);
+export default app;
