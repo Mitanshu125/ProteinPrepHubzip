@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import cors from "cors";
 import "dotenv/config"
 import { sendEmail } from "./utils/sendEmail.js";
+import https from "https";
 
 const app = express();
 const router = express.Router();
@@ -63,9 +64,11 @@ app.listen(PORT, () => {
   console.log(`Server listening at port ${PORT}`);
 });
 
-// Keep alive ping
+// Keep server alive
 setInterval(() => {
-  fetch("https://proteinprephubzip.onrender.com")
-    .then(() => console.log("Server kept alive"))
-    .catch(() => console.log("Ping failed"));
-}, 14 * 60 * 1000); // ping every 14 minutes
+  https.get("https://proteinprephubzip.onrender.com", (res) => {
+    console.log("Server pinged:", res.statusCode);
+  }).on("error", (err) => {
+    console.log("Ping failed:", err.message);
+  });
+}, 14 * 60 * 1000);
