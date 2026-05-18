@@ -1,4 +1,7 @@
+import axios from "axios";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 function ContactUsPage() {
   const [name, setName] = useState("");
@@ -6,13 +9,27 @@ function ContactUsPage() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [focused, setFocused] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setName("");
-    setEmail("");
-    setMessage("");
+    setLoading(true);
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/send/mail`,
+        { name, email, message },
+        { withCredentials: true, headers: { "Content-Type": "application/json" } }
+      );
+      setSubmitted(true);
+      setName("");
+      setEmail("");
+      setMessage("");
+      toast.success("Message sent successfully!");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputStyle = (field) => ({
@@ -167,8 +184,9 @@ function ContactUsPage() {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                if (name && email && message) handleSubmit(e);
+                if (name && email && message && !loading) handleSubmit(e);
               }}
+              disabled={loading}
               style={{
                 padding: "13px 32px",
                 background: "var(--navy)",
@@ -178,14 +196,16 @@ function ContactUsPage() {
                 fontSize: "11px",
                 fontWeight: "700",
                 fontFamily: "Inter, sans-serif",
-                cursor: "pointer",
+                cursor: loading ? "not-allowed" : "pointer",
                 letterSpacing: "1.4px",
                 textTransform: "uppercase",
                 transition: "background 0.22s, transform 0.18s",
+                opacity: loading ? 0.7 : 1,
               }}
-              onMouseOver={(e) => { e.currentTarget.style.background = "var(--navy-mid)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseOver={(e) => { if (!loading) { e.currentTarget.style.background = "var(--navy-mid)"; e.currentTarget.style.transform = "translateY(-1px)"; }}}
               onMouseOut={(e) => { e.currentTarget.style.background = "var(--navy)"; e.currentTarget.style.transform = "translateY(0)"; }}
             >
+              {loading && <ClipLoader size={14} color="#c8893a" style={{ marginRight: 8 }} />}
               Send Message
             </button>
           </div>
