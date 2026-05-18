@@ -53,3 +53,10 @@ router.post("/send/mail", async (req, res) => {
 app.use(router);
 
 export default app;
+
+if (process.env.VERCEL !== "1") {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`Server listening at port ${PORT}`);
+  });
+}
