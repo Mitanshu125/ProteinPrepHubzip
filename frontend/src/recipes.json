@@ -1,0 +1,637 @@
+[
+  {
+    "id": 1,
+    "title": "Chickpea Salad Bowl",
+    "description": "A refreshing and protein-packed vegetarian salad with chickpeas, veggies, and a tangy dressing.",
+    "ingredients": [
+      "1 cup boiled chickpeas",
+      "1/2 cucumber, diced",
+      "1/2 tomato, diced",
+      "1/4 red onion, chopped",
+      "1 tbsp olive oil",
+      "1 tbsp lemon juice",
+      "Salt and pepper"
+    ],
+    "steps": [
+      "Rinse and drain the boiled chickpeas.",
+      "Dice cucumber, tomato, and onion.",
+      "In a bowl, mix chickpeas with the chopped veggies.",
+      "Drizzle olive oil and lemon juice over the mixture.",
+      "Season with salt and pepper to taste.",
+      "Toss well and serve immediately."
+    ],
+    "image": "/chickpea_salad.jpg",
+    "cookingTime": "10 mins",
+    "nutrition": {
+      "calories": 285,
+      "protein": 15,
+      "carbs": 38,
+      "fats": 8,
+      "fiber": 10,
+      "sugar": 6,
+      "sodium": 320,
+      "vitamins": "Vitamin C, Iron, Folate"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Paneer Stir-Fry",
+    "description": "Quick and flavorful Indian-style stir-fried paneer with bell peppers and spices.",
+    "ingredients": [
+      "200g paneer, cubed",
+      "1/2 green bell pepper, sliced",
+      "1/2 red bell pepper, sliced",
+      "1 tsp cumin seeds",
+      "1/2 tsp turmeric",
+      "1/2 tsp red chili powder",
+      "Salt and oil"
+    ],
+    "steps": [
+      "Heat oil in a pan and add cumin seeds.",
+      "Add paneer cubes and sauté until golden brown.",
+      "Add sliced bell peppers and cook for 3-4 mins.",
+      "Sprinkle turmeric, red chili powder, and salt.",
+      "Mix well and cook until veggies are tender.",
+      "Serve hot with roti or rice."
+    ],
+    "image": "/paneer_stirfry.webp",
+    "cookingTime": "15 mins",
+    "nutrition": {
+      "calories": 310,
+      "protein": 13,
+      "carbs": 8,
+      "fats": 24,
+      "fiber": 2,
+      "sugar": 4,
+      "sodium": 380,
+      "vitamins": "Vitamin C, Calcium, Vitamin A"
+    },
+    "tags": [
+      "Vegetarian",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Lentil Spinach Soup",
+    "description": "A warm and hearty soup made with protein-rich lentils and fresh spinach.",
+    "ingredients": [
+      "1/2 cup red lentils",
+      "2 cups water",
+      "1 cup spinach leaves",
+      "1 garlic clove, minced",
+      "1/2 onion, chopped",
+      "Salt, pepper, cumin powder"
+    ],
+    "steps": [
+      "Rinse red lentils thoroughly.",
+      "In a pot, sauté garlic and onion in oil.",
+      "Add lentils and water, bring to boil.",
+      "Simmer for 15-20 minutes until soft.",
+      "Add spinach, salt, pepper, and cumin.",
+      "Cook for 5 mins and serve warm."
+    ],
+    "image": "/lentil_spinach_soup.webp",
+    "cookingTime": "30 mins",
+    "nutrition": {
+      "calories": 240,
+      "protein": 18,
+      "carbs": 36,
+      "fats": 4,
+      "fiber": 14,
+      "sugar": 3,
+      "sodium": 410,
+      "vitamins": "Iron, Vitamin K, Folate"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "High Protein"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Tofu Scramble",
+    "description": "A vegan alternative to scrambled eggs, packed with tofu and veggies.",
+    "ingredients": [
+      "200g firm tofu, crumbled",
+      "1/2 bell pepper, diced",
+      "1/4 onion, chopped",
+      "1/4 tsp turmeric",
+      "Salt and pepper",
+      "1 tsp olive oil"
+    ],
+    "steps": [
+      "Heat oil in a pan and sauté onion and bell pepper.",
+      "Add crumbled tofu and mix well.",
+      "Sprinkle turmeric, salt, and pepper.",
+      "Cook for 5-6 mins stirring occasionally.",
+      "Let the tofu get slightly golden.",
+      "Serve with toast or roti."
+    ],
+    "image": "/tofu_scramble.jpg",
+    "cookingTime": "15 mins",
+    "nutrition": {
+      "calories": 220,
+      "protein": 20,
+      "carbs": 7,
+      "fats": 13,
+      "fiber": 2,
+      "sugar": 3,
+      "sodium": 350,
+      "vitamins": "Calcium, Iron, Vitamin C"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Quinoa Chickpea Bowl",
+    "description": "A nutritious grain bowl featuring quinoa, chickpeas, and fresh vegetables.",
+    "ingredients": [
+      "1 cup cooked quinoa",
+      "1/2 cup boiled chickpeas",
+      "1/2 carrot, shredded",
+      "1/2 cucumber, diced",
+      "1 tbsp hummus",
+      "Salt and lemon juice"
+    ],
+    "steps": [
+      "Layer cooked quinoa in a bowl.",
+      "Add chickpeas, carrots, and cucumber.",
+      "Top with a dollop of hummus.",
+      "Drizzle lemon juice and sprinkle salt.",
+      "Mix lightly or keep layered.",
+      "Serve fresh for a balanced meal."
+    ],
+    "image": "/quinoa_chickpea_bowl.jpg",
+    "cookingTime": "20 mins",
+    "nutrition": {
+      "calories": 380,
+      "protein": 16,
+      "carbs": 58,
+      "fats": 8,
+      "fiber": 11,
+      "sugar": 5,
+      "sodium": 290,
+      "vitamins": "Vitamin A, Iron, Folate, Vitamin C"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "High Protein"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Greek Yogurt Parfait",
+    "description": "A high-protein breakfast or snack with Greek yogurt, granola, and fruits.",
+    "ingredients": [
+      "1 cup plain Greek yogurt",
+      "1/4 cup granola",
+      "1/4 cup mixed berries",
+      "1 tsp honey (optional)"
+    ],
+    "steps": [
+      "Spoon half the yogurt into a glass.",
+      "Add a layer of granola and berries.",
+      "Repeat with remaining yogurt.",
+      "Top with more berries and honey.",
+      "Chill for 5 mins if preferred.",
+      "Serve as a light meal or snack."
+    ],
+    "image": "/yogurt_parfait.jpg",
+    "cookingTime": "5 mins",
+    "nutrition": {
+      "calories": 290,
+      "protein": 20,
+      "carbs": 38,
+      "fats": 5,
+      "fiber": 3,
+      "sugar": 18,
+      "sodium": 80,
+      "vitamins": "Calcium, Vitamin C, Vitamin B12"
+    },
+    "tags": [
+      "Vegetarian",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Moong Dal Chilla",
+    "description": "Indian savory lentil pancakes made from ground moong dal batter.",
+    "ingredients": [
+      "1/2 cup yellow moong dal",
+      "1 green chili",
+      "1/4 inch ginger",
+      "Salt, turmeric, oil",
+      "Chopped coriander"
+    ],
+    "steps": [
+      "Soak dal for 2-3 hours and grind to paste.",
+      "Add chopped chili, ginger, salt, and turmeric.",
+      "Heat a pan and pour ladleful of batter.",
+      "Spread gently and drizzle oil on edges.",
+      "Cook on both sides till golden.",
+      "Serve hot with chutney or curd."
+    ],
+    "image": "/moong_dal_chilla.jpg",
+    "cookingTime": "25 mins",
+    "nutrition": {
+      "calories": 180,
+      "protein": 8,
+      "carbs": 28,
+      "fats": 4,
+      "fiber": 6,
+      "sugar": 2,
+      "sodium": 260,
+      "vitamins": "Iron, Folate, Vitamin B1"
+    },
+    "tags": [
+      "Vegetarian",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Egg White Omelette",
+    "description": "A low-fat, high-protein egg white omelette with vegetables.",
+    "ingredients": [
+      "3 egg whites",
+      "1/4 cup chopped spinach",
+      "1/4 tomato, diced",
+      "Salt, pepper, olive oil"
+    ],
+    "steps": [
+      "Whisk egg whites in a bowl.",
+      "Add spinach, tomato, salt, and pepper.",
+      "Heat oil in a non-stick pan.",
+      "Pour mixture and spread evenly.",
+      "Cook until firm and flip gently.",
+      "Serve hot with toast or salad."
+    ],
+    "image": "/egg_white_omelette.jpg",
+    "cookingTime": "10 mins",
+    "nutrition": {
+      "calories": 130,
+      "protein": 23,
+      "carbs": 4,
+      "fats": 3,
+      "fiber": 1,
+      "sugar": 2,
+      "sodium": 310,
+      "vitamins": "Vitamin K, Riboflavin, Potassium"
+    },
+    "tags": [
+      "High Protein",
+      "Low Carb",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Sprouts Stir Fry",
+    "description": "Quick stir-fry made with moong sprouts, light spices, and veggies.",
+    "ingredients": [
+      "1 cup moong sprouts",
+      "1/4 onion, sliced",
+      "1/4 tomato, diced",
+      "1/4 tsp mustard seeds",
+      "Salt, turmeric, oil"
+    ],
+    "steps": [
+      "Heat oil in a pan and add mustard seeds.",
+      "Add onion and sauté until translucent.",
+      "Add sprouts and cook for 2-3 minutes.",
+      "Add tomato, turmeric, and salt.",
+      "Cook until soft but not mushy.",
+      "Serve warm as snack or side."
+    ],
+    "image": "/sprouts_stirfry.jpg",
+    "cookingTime": "15 mins",
+    "nutrition": {
+      "calories": 155,
+      "protein": 10,
+      "carbs": 22,
+      "fats": 4,
+      "fiber": 5,
+      "sugar": 4,
+      "sodium": 230,
+      "vitamins": "Vitamin C, Iron, Folate"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Cottage Cheese Sandwich",
+    "description": "A protein-rich vegetarian sandwich made with paneer and whole grain bread.",
+    "ingredients": [
+      "2 slices whole grain bread",
+      "100g paneer, crumbled",
+      "1 tbsp hung curd",
+      "1/4 onion, chopped",
+      "Salt, pepper, mint leaves"
+    ],
+    "steps": [
+      "Mix paneer, hung curd, onion, salt, and pepper.",
+      "Spread mixture on one slice of bread.",
+      "Add mint leaves for flavor.",
+      "Cover with the second slice.",
+      "Grill or toast until golden.",
+      "Serve with ketchup or chutney."
+    ],
+    "image": "/paneer_sandwich.jpg",
+    "cookingTime": "10 mins",
+    "nutrition": {
+      "calories": 340,
+      "protein": 15,
+      "carbs": 34,
+      "fats": 14,
+      "fiber": 4,
+      "sugar": 4,
+      "sodium": 520,
+      "vitamins": "Calcium, Iron, Vitamin B6"
+    },
+    "tags": [
+      "Vegetarian",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Peanut Butter Banana Smoothie",
+    "description": "A creamy and high-protein smoothie made with peanut butter, banana, and milk.",
+    "ingredients": [
+      "1 ripe banana",
+      "1 tbsp peanut butter",
+      "1 cup milk (or plant-based)",
+      "1/2 tsp cinnamon (optional)"
+    ],
+    "steps": [
+      "Peel and slice the banana.",
+      "Add banana, peanut butter, and milk to a blender.",
+      "Optionally add cinnamon for flavor.",
+      "Blend until smooth and creamy.",
+      "Pour into a glass and serve.",
+      "Chill beforehand for extra refreshment."
+    ],
+    "image": "/peanut_butter_smoothie.jpg",
+    "cookingTime": "5 mins",
+    "nutrition": {
+      "calories": 360,
+      "protein": 14,
+      "carbs": 48,
+      "fats": 12,
+      "fiber": 4,
+      "sugar": 28,
+      "sodium": 160,
+      "vitamins": "Calcium, Vitamin D, Potassium, Vitamin B6"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Boiled Egg Salad",
+    "description": "Simple and nutritious salad with boiled eggs and fresh veggies.",
+    "ingredients": [
+      "2 boiled eggs, chopped",
+      "1/4 cucumber, diced",
+      "1/2 tomato, diced",
+      "Salt, pepper, lemon juice"
+    ],
+    "steps": [
+      "Chop the boiled eggs into pieces.",
+      "Dice cucumber and tomato.",
+      "Mix eggs and veggies in a bowl.",
+      "Add salt, pepper, and lemon juice.",
+      "Toss gently and combine well.",
+      "Serve fresh as a protein-rich snack."
+    ],
+    "image": "/boiled_egg_salad.webp",
+    "cookingTime": "10 mins",
+    "nutrition": {
+      "calories": 170,
+      "protein": 13,
+      "carbs": 5,
+      "fats": 10,
+      "fiber": 1,
+      "sugar": 3,
+      "sodium": 280,
+      "vitamins": "Vitamin A, Vitamin D, Vitamin B12"
+    },
+    "tags": [
+      "High Protein",
+      "Low Carb",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 13,
+    "title": "Chia Seed Pudding",
+    "description": "Overnight pudding with chia seeds soaked in milk, flavored with fruits.",
+    "ingredients": [
+      "3 tbsp chia seeds",
+      "1 cup milk (any kind)",
+      "1 tsp honey",
+      "Chopped fruits (berries, banana)"
+    ],
+    "steps": [
+      "In a jar, mix chia seeds with milk.",
+      "Stir well and add honey.",
+      "Cover and refrigerate overnight.",
+      "Stir again before serving.",
+      "Top with chopped fruits.",
+      "Serve chilled as breakfast or dessert."
+    ],
+    "image": "/chia_seed_pudding.webp",
+    "cookingTime": "5 mins prep + overnight rest",
+    "nutrition": {
+      "calories": 280,
+      "protein": 12,
+      "carbs": 34,
+      "fats": 11,
+      "fiber": 10,
+      "sugar": 16,
+      "sodium": 120,
+      "vitamins": "Calcium, Omega-3, Iron, Vitamin D"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "Low Carb"
+    ]
+  },
+  {
+    "id": 14,
+    "title": "Besan Cheela",
+    "description": "Savory Indian pancakes made with gram flour, veggies, and spices.",
+    "ingredients": [
+      "1/2 cup besan (gram flour)",
+      "1/4 onion, chopped",
+      "1/4 tomato, chopped",
+      "Salt, turmeric, cumin, water"
+    ],
+    "steps": [
+      "Mix besan with chopped veggies and spices.",
+      "Add water to form a pourable batter.",
+      "Heat a pan and pour batter evenly.",
+      "Cook on both sides until golden brown.",
+      "Drizzle little oil to crisp edges.",
+      "Serve hot with chutney or curd."
+    ],
+    "image": "/besan_cheela.jpg",
+    "cookingTime": "20 mins",
+    "nutrition": {
+      "calories": 210,
+      "protein": 11,
+      "carbs": 30,
+      "fats": 5,
+      "fiber": 5,
+      "sugar": 3,
+      "sodium": 310,
+      "vitamins": "Iron, Folate, Vitamin B6"
+    },
+    "tags": [
+      "Vegetarian",
+      "High Protein",
+      "Quick Meal"
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Masoor Dal with Rice",
+    "description": "Classic Indian red lentil curry served with steamed rice.",
+    "ingredients": [
+      "1/2 cup masoor dal",
+      "1 tomato, chopped",
+      "1/4 onion, chopped",
+      "1/2 tsp cumin seeds",
+      "Salt, turmeric, water"
+    ],
+    "steps": [
+      "Wash and boil dal with turmeric and water.",
+      "In a pan, sauté cumin, onion, and tomato.",
+      "Add boiled dal and adjust salt.",
+      "Simmer for 5-7 mins for flavors to blend.",
+      "Cook rice separately while dal simmers.",
+      "Serve hot dal with steamed rice."
+    ],
+    "image": "/masoor_dal_rice.jpg",
+    "cookingTime": "30 mins",
+    "nutrition": {
+      "calories": 420,
+      "protein": 18,
+      "carbs": 78,
+      "fats": 3,
+      "fiber": 12,
+      "sugar": 4,
+      "sodium": 380,
+      "vitamins": "Iron, Folate, Vitamin B1"
+    },
+    "tags": [
+      "Vegetarian",
+      "Vegan",
+      "High Protein"
+    ]
+  },
+  {
+    "id": 16,
+    "title": "Grilled Chicken Skewers",
+    "description": "Lean grilled chicken chunks marinated in spices and served with vegetables.",
+    "ingredients": [
+      "100g boneless chicken pieces",
+      "1 tbsp yogurt",
+      "1/4 tsp chili powder",
+      "1/4 tsp garam masala",
+      "Salt, lemon juice, bell peppers"
+    ],
+    "steps": [
+      "Marinate chicken with yogurt, spices, and lemon.",
+      "Let sit for at least 30 minutes.",
+      "Skewer with bell pepper pieces.",
+      "Grill on stove or oven until cooked.",
+      "Turn occasionally for even cooking.",
+      "Serve with mint chutney or salad."
+    ],
+    "image": "/grilled_chicken_skewers.jpg",
+    "cookingTime": "40 mins (includes marination)",
+    "nutrition": {
+      "calories": 190,
+      "protein": 24,
+      "carbs": 6,
+      "fats": 7,
+      "fiber": 1,
+      "sugar": 3,
+      "sodium": 420,
+      "vitamins": "Vitamin B6, Niacin, Phosphorus"
+    },
+    "tags": [
+      "High Protein",
+      "Low Carb"
+    ]
+  },
+  {
+    "id": 17,
+    "title": "Classic Cheese & Veggie Salad",
+    "description": "A fresh and zesty salad with cubes of cheese, olives, cucumbers, and a lemon-herb dressing.",
+    "ingredients": [
+      "1/2 cup feta or paneer cubes",
+      "1/2 cucumber, diced",
+      "1/2 tomato, diced",
+      "1/4 red onion, thinly sliced",
+      "1 tbsp black olives (optional)",
+      "1 tbsp olive oil",
+      "1 tsp lemon juice",
+      "Salt, pepper, oregano"
+    ],
+    "steps": [
+      "Dice the cucumber, tomato, and red onion.",
+      "Cube the cheese (feta for tanginess or paneer for Indian flavor).",
+      "In a large bowl, combine all chopped vegetables and cheese.",
+      "Add olives, if using.",
+      "Drizzle olive oil and lemon juice over the salad.",
+      "Season with salt, pepper, and a pinch of oregano, then toss gently and serve chilled."
+    ],
+    "image": "/main.jpg",
+    "cookingTime": "10 mins",
+    "nutrition": {
+      "calories": 230,
+      "protein": 9,
+      "carbs": 8,
+      "fats": 18,
+      "fiber": 2,
+      "sugar": 4,
+      "sodium": 480,
+      "vitamins": "Calcium, Vitamin C, Vitamin A"
+    },
+    "tags": [
+      "Vegetarian",
+      "High Protein",
+      "Quick Meal"
+    ]
+  }
+]
