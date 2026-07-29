@@ -8,7 +8,6 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
-connectDB();
 const router = express.Router();
 
 app.use(
@@ -22,6 +21,18 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Ensure the DB connection is ready (or reused from cache) before any
+// route handler runs. On a warm invocation this resolves instantly
+// because connectDB() returns the cached connection.
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(503).json({ success: false, message: "Database unavailable, please try again." });
+  }
+});
 
 app.get("/", (req, res) => {
   res.send("Server is running")
@@ -64,7 +75,9 @@ export default app;
 
 if (process.env.VERCEL !== "1") {
   const PORT = process.env.PORT || 4000;
-  app.listen(PORT, () => {
-    console.log(`Server listening at port ${PORT}`);
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server listening at port ${PORT}`);
+    });
   });
 }
