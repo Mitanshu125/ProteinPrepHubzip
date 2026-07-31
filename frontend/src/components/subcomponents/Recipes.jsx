@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useAuth } from "../../context/AuthContext"
+import { useUserData } from "../../context/UserDataContext"
 
 const API = import.meta.env.VITE_BACKEND_URL
 
@@ -11,44 +12,52 @@ function isToday(dateStr) {
 }
 
 function ProteinBar() {
-  const { isLoggedIn, token } = useAuth()
-  const [proteinConsumed, setProteinConsumed] = useState(0)
-  const [proteinGoal, setProteinGoal] = useState(160)
+  const { isLoggedIn } = useAuth()
+  const { userData, loading } = useUserData()
+
+  const [guestConsumed, setGuestConsumed] = useState(0)
+  const [guestGoal, setGuestGoal] = useState(160)
 
   const loadGuestData = () => {
     const added = JSON.parse(localStorage.getItem("proteinAdded") || "[]")
     const todaysAdded = added.filter((entry) => isToday(entry.date))
     const total = todaysAdded.reduce((sum, entry) => sum + (entry.protein || 0), 0)
-    setProteinConsumed(total)
-    setProteinGoal(parseInt(localStorage.getItem("proteinGoal") || "160"))
-  }
-
-  const loadUserData = async () => {
-    try {
-      const res = await fetch(`${API}/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      setProteinGoal(data.proteinGoal || 160)
-      const todaysMeals = (data.mealHistory || []).filter((m) => isToday(m.loggedAt))
-      const total = todaysMeals.reduce((sum, m) => sum + (m.protein || 0), 0)
-      setProteinConsumed(total)
-    } catch (err) {
-      console.error("Failed to load protein data:", err)
-    }
+    setGuestConsumed(total)
+    setGuestGoal(parseInt(localStorage.getItem("proteinGoal") || "160"))
   }
 
   useEffect(() => {
-    isLoggedIn ? loadUserData() : loadGuestData()
+    if (!isLoggedIn) loadGuestData()
   }, [isLoggedIn])
 
   useEffect(() => {
-    const handler = () => (isLoggedIn ? loadUserData() : loadGuestData())
+    const handler = () => { if (!isLoggedIn) loadGuestData() }
     window.addEventListener("proteinUpdate", handler)
     return () => window.removeEventListener("proteinUpdate", handler)
-  }, [isLoggedIn, token])
+  }, [isLoggedIn])
+
+  const { proteinConsumed, proteinGoal } = useMemo(() => {
+    if (!isLoggedIn) return { proteinConsumed: guestConsumed, proteinGoal: guestGoal }
+    if (!userData) return { proteinConsumed: 0, proteinGoal: 160 }
+    const todaysMeals = (userData.mealHistory || []).filter((m) => isToday(m.loggedAt))
+    const total = todaysMeals.reduce((sum, m) => sum + (m.protein || 0), 0)
+    return { proteinConsumed: total, proteinGoal: userData.proteinGoal || 160 }
+  }, [isLoggedIn, userData, guestConsumed, guestGoal])
 
   const proteinPct = Math.min(Math.round((proteinConsumed / proteinGoal) * 100), 100)
+
+  if (isLoggedIn && loading) {
+    return (
+      <div className="hero-protein-card hero-protein-card--inline">
+        <div className="hero-protein-top">
+          <span className="hero-protein-label">TODAY'S PROTEIN</span>
+        </div>
+        <div className="hero-protein-value">
+          <span className="hero-protein-num">—</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="hero-protein-card hero-protein-card--inline">
@@ -101,85 +110,86 @@ function loadGuestFavourites() {
 
 function Recipes({recipes}) {
   const { isLoggedIn, token } = useAuth()
+  const { userData, refreshUserData } = useUserData()
   const [query, setQuery] = useState("");
   const [calFilter, setCalFilter] = useState(0);
   const [sortIdx, setSortIdx] = useState(0);
   const [activeTags, setActiveTags] = useState([]);
   const [showFavs, setShowFavs] = useState(false);
-  const [favourites, setFavourites] = useState(new Set());
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  // Maps recipeId -> { qty, entryIds } for meals added TODAY, so cards can
-  // show "already added" state and let you remove one.
-  const [todayLog, setTodayLog] = useState({});
 
-  const loadTodayLog = async () => {
-    if (isLoggedIn) {
-      try {
-        const res = await fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` } })
-        const data = await res.json()
-        const map = {}
-        ;(data.mealHistory || []).forEach((m) => {
-          if (!m.recipe || !isToday(m.loggedAt)) return
-          const key = m.recipe.toString ? m.recipe.toString() : m.recipe
-          if (!map[key]) map[key] = { qty: 0, entryIds: [] }
-          map[key].qty += 1
-          map[key].entryIds.push(m._id)
-        })
-        setTodayLog(map)
-      } catch (err) {
-        console.error("Failed to load today's log:", err)
-      }
-    } else {
-      const added = JSON.parse(localStorage.getItem("proteinAdded") || "[]")
-      const map = {}
-      added.filter((entry) => isToday(entry.date)).forEach((entry) => {
-        if (!map[entry.id]) map[entry.id] = { qty: 0 }
-        map[entry.id].qty += 1
-      })
-      setTodayLog(map)
-    }
+  // Favourites: derived from shared userData when logged in, localStorage otherwise
+  const [guestFavourites, setGuestFavourites] = useState(() => loadGuestFavourites());
+  const favourites = useMemo(() => {
+    if (!isLoggedIn) return guestFavourites
+    if (!userData) return new Set()
+    const ids = (userData.savedRecipes || []).map((r) => r._id || r)
+    return new Set(ids)
+  }, [isLoggedIn, userData, guestFavourites])
+
+  // Today's log: derived from shared userData when logged in, localStorage otherwise
+  const [guestTodayLog, setGuestTodayLog] = useState({})
+
+  const loadGuestTodayLog = () => {
+    const added = JSON.parse(localStorage.getItem("proteinAdded") || "[]")
+    const map = {}
+    added.filter((entry) => isToday(entry.date)).forEach((entry) => {
+      if (!map[entry.id]) map[entry.id] = { qty: 0 }
+      map[entry.id].qty += 1
+    })
+    setGuestTodayLog(map)
   }
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` } })
-        .then((res) => res.json())
-        .then((data) => {
-          const ids = (data.savedRecipes || []).map((r) => r._id || r)
-          setFavourites(new Set(ids))
-        })
-        .catch((err) => console.error("Failed to load favourites:", err))
-    } else {
-      setFavourites(loadGuestFavourites())
-    }
-    loadTodayLog()
-  }, [isLoggedIn, token]);
+    if (!isLoggedIn) loadGuestTodayLog()
+  }, [isLoggedIn])
+
+  useEffect(() => {
+    const handler = () => { if (!isLoggedIn) loadGuestTodayLog() }
+    window.addEventListener("proteinUpdate", handler)
+    return () => window.removeEventListener("proteinUpdate", handler)
+  }, [isLoggedIn])
+
+  const todayLog = useMemo(() => {
+    if (!isLoggedIn) return guestTodayLog
+    if (!userData) return {}
+    const map = {}
+    ;(userData.mealHistory || []).forEach((m) => {
+      if (!m.recipe || !isToday(m.loggedAt)) return
+      const key = m.recipe.toString ? m.recipe.toString() : m.recipe
+      if (!map[key]) map[key] = { qty: 0, entryIds: [] }
+      map[key].qty += 1
+      map[key].entryIds.push(m._id)
+    })
+    return map
+  }, [isLoggedIn, userData, guestTodayLog])
 
   const toggleFav = async (e, id) => {
     e.preventDefault();
     e.stopPropagation();
 
-    setFavourites((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      if (!isLoggedIn) localStorage.setItem("favourites", JSON.stringify([...next]));
-      return next;
-    });
-
-    if (!isLoggedIn && !sessionStorage.getItem("loginNudgeShown")) {
-      sessionStorage.setItem("loginNudgeShown", "1");
-      setShowLoginPrompt(true);
+    if (!isLoggedIn) {
+      setGuestFavourites((prev) => {
+        const next = new Set(prev);
+        next.has(id) ? next.delete(id) : next.add(id);
+        localStorage.setItem("favourites", JSON.stringify([...next]));
+        return next;
+      });
+      if (!sessionStorage.getItem("loginNudgeShown")) {
+        sessionStorage.setItem("loginNudgeShown", "1");
+        setShowLoginPrompt(true);
+      }
+      return;
     }
 
-    if (isLoggedIn) {
-      try {
-        await fetch(`${API}/users/favourites/${id}`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (err) {
-        console.error("Failed to update favourite:", err);
-      }
+    try {
+      await fetch(`${API}/users/favourites/${id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await refreshUserData();
+    } catch (err) {
+      console.error("Failed to update favourite:", err);
     }
   };
 
@@ -209,7 +219,7 @@ function Recipes({recipes}) {
             serving: element.cookingTime || "",
           }),
         });
-        await loadTodayLog();
+        await refreshUserData();
       } catch (err) {
         console.error("Failed to log meal:", err);
       }
@@ -217,7 +227,7 @@ function Recipes({recipes}) {
       const added = JSON.parse(localStorage.getItem("proteinAdded") || "[]");
       added.push({ id: element.id, protein, date: new Date().toISOString() });
       localStorage.setItem("proteinAdded", JSON.stringify(added));
-      await loadTodayLog();
+      loadGuestTodayLog();
     }
     window.dispatchEvent(new Event("proteinUpdate"));
   };
@@ -236,7 +246,7 @@ function Recipes({recipes}) {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
-        await loadTodayLog();
+        await refreshUserData();
       } catch (err) {
         console.error("Failed to remove meal:", err);
       }
@@ -248,7 +258,7 @@ function Recipes({recipes}) {
         added.splice(realIdx, 1);
         localStorage.setItem("proteinAdded", JSON.stringify(added));
       }
-      await loadTodayLog();
+      loadGuestTodayLog();
     }
     window.dispatchEvent(new Event("proteinUpdate"));
   };

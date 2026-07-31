@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useAuth } from "../context/AuthContext"
+import { useUserData } from "../context/UserDataContext"
 
 const API = import.meta.env.VITE_BACKEND_URL
 
@@ -29,10 +30,6 @@ function getStreak() {
   catch { return [] }
 }
 
-// Counts consecutive days (ending today) that appear in `dates`
-// (an array of date strings, e.g. from toDateString()). If today has no
-// entry yet but yesterday does, the streak still counts (you have until
-// end of day to keep it alive). If yesterday is missing, it's broken -> 0.
 function computeStreakFromDates(dates) {
   const set = new Set(dates)
   const today = new Date()
@@ -40,7 +37,6 @@ function computeStreakFromDates(dates) {
 
   let start = new Date(today)
   if (!set.has(todayStr)) {
-    // haven't logged today yet - check if yesterday keeps the streak alive
     const yesterday = new Date(today)
     yesterday.setDate(yesterday.getDate() - 1)
     if (!set.has(yesterday.toDateString())) return 0
@@ -84,21 +80,62 @@ function GoalEditor({ label, value, unit, onSave, onCancel }) {
 
 function ProteinTracker() {
   const { isLoggedIn, token } = useAuth()
-  const [goal, setGoal] = useState(() => parseInt(localStorage.getItem("proteinGoal") || "160"))
+  const { userData, loading, refreshUserData } = useUserData()
+
   const [calorieGoal, setCalorieGoal] = useState(() => parseInt(localStorage.getItem("calorieGoal") || "2200"))
   const [waterGoal, setWaterGoal] = useState(() => parseFloat(localStorage.getItem("waterGoal") || "2.5"))
-  const [consumed, setConsumed] = useState(() => parseInt(localStorage.getItem("proteinConsumed") || "0"))
   const [water, setWater] = useState(() => parseFloat(localStorage.getItem("waterLiters") || "0"))
-  const [meals, setMeals] = useState(() => {
+
+  const [guestConsumed, setGuestConsumed] = useState(() => parseInt(localStorage.getItem("proteinConsumed") || "0"))
+  const [guestGoal, setGuestGoal] = useState(() => parseInt(localStorage.getItem("proteinGoal") || "160"))
+  const [guestMeals, setGuestMeals] = useState(() => {
     try { return JSON.parse(localStorage.getItem("mealLog") || "[]") }
     catch { return [] }
   })
+
   const [selectedRecipe, setSelectedRecipe] = useState("")
   const [editingGoal, setEditingGoal] = useState(null)
   const [streak, setStreak] = useState(0)
 
   const today = new Date()
   const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1
+
+  const { consumed, goal, meals } = useMemo(() => {
+    if (!isLoggedIn) {
+      return { consumed: guestConsumed, goal: guestGoal, meals: guestMeals }
+    }
+    if (!userData) return { consumed: 0, goal: 160, meals: [] }
+
+    const history = userData.mealHistory || []
+    const todaysHistory = history.filter(
+      (m) => new Date(m.loggedAt).toDateString() === new Date().toDateString()
+    )
+    const total = todaysHistory.reduce((sum, m) => sum + (m.protein || 0), 0)
+
+    const groups = []
+    todaysHistory.forEach((m) => {
+      const existing = groups.find((g) => g.name === m.title)
+      if (existing) {
+        existing.qty += 1
+        existing.entryIds.push(m._id)
+        existing.time = m.loggedAt ? formatTime(new Date(m.loggedAt)) : existing.time
+      } else {
+        groups.push({
+          name: m.title,
+          protein: m.protein || 0,
+          calories: m.calories || 0,
+          carbs: m.carbs || 0,
+          fats: m.fats || 0,
+          serving: m.serving || "",
+          time: m.loggedAt ? formatTime(new Date(m.loggedAt)) : "",
+          qty: 1,
+          entryIds: [m._id],
+        })
+      }
+    })
+
+    return { consumed: total, goal: userData.proteinGoal || 160, meals: groups }
+  }, [isLoggedIn, userData, guestConsumed, guestGoal, guestMeals])
 
   const pct = Math.min(Math.round((consumed / goal) * 100), 100)
   const radius = 54
@@ -108,82 +145,40 @@ function ProteinTracker() {
   const chosen = RECIPE_OPTIONS.find(r => r.name === selectedRecipe) || null
   const totalCalories = meals.reduce((s, m) => s + (m.calories || 0) * (m.qty || 1), 0)
 
-  const loadAccountConsumed = () => {
-    fetch(`${API}/users/me`, { headers: { Authorization: `Bearer ${token}` } })
-      .then((res) => res.json())
-      .then((data) => {
-        const history = data.mealHistory || []
-        const todaysHistory = history.filter(
-          (m) => new Date(m.loggedAt).toDateString() === new Date().toDateString()
-        )
-        const total = todaysHistory.reduce((sum, m) => sum + (m.protein || 0), 0)
-        setConsumed(total)
-        setGoal(data.proteinGoal || 160)
-
-        // Group TODAY's entries that share the same title, so the card shows
-        // "qty" instead of one row per individual log. Each group keeps
-        // the list of real database entry IDs (oldest to newest) so the
-        // "-" button can delete one specific entry.
-        const groups = []
-        todaysHistory.forEach((m) => {
-          const existing = groups.find((g) => g.name === m.title)
-          if (existing) {
-            existing.qty += 1
-            existing.entryIds.push(m._id)
-            existing.time = m.loggedAt ? formatTime(new Date(m.loggedAt)) : existing.time
-          } else {
-            groups.push({
-              name: m.title,
-              protein: m.protein || 0,
-              calories: m.calories || 0,
-              carbs: m.carbs || 0,
-              fats: m.fats || 0,
-              serving: m.serving || "",
-              time: m.loggedAt ? formatTime(new Date(m.loggedAt)) : "",
-              qty: 1,
-              entryIds: [m._id],
-            })
-          }
-        })
-        setMeals(groups)
-
-        // Real streak, derived from the actual days you've logged a meal
-        // in your account (uses full history, not just today).
-        const loggedDates = history.map((m) => new Date(m.loggedAt).toDateString())
-        setStreak(computeStreakFromDates(loggedDates))
-      })
-      .catch((err) => console.error("Failed to load protein total:", err))
-  }
-
   useEffect(() => {
-    if (isLoggedIn) {
-      loadAccountConsumed()
-    } else {
+    if (isLoggedIn && userData) {
+      const history = userData.mealHistory || []
+      const loggedDates = history.map((m) => new Date(m.loggedAt).toDateString())
+      setStreak(computeStreakFromDates(loggedDates))
+    } else if (!isLoggedIn) {
       setStreak(computeStreakFromDates(getStreak()))
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, userData])
 
   useEffect(() => {
     const handler = () => {
-      if (isLoggedIn) {
-        loadAccountConsumed()
-      } else {
-        const c = parseInt(localStorage.getItem("proteinConsumed") || "0")
-        setConsumed(c)
-      }
-      const log = getStreak()
-      const todayStr = new Date().toDateString()
-      if (!log.includes(todayStr)) {
-        log.push(todayStr)
-        localStorage.setItem("streakLog", JSON.stringify(log.slice(-30)))
-      }
       if (!isLoggedIn) {
+        const c = parseInt(localStorage.getItem("proteinConsumed") || "0")
+        setGuestConsumed(c)
+        const log = getStreak()
+        const todayStr = new Date().toDateString()
+        if (!log.includes(todayStr)) {
+          log.push(todayStr)
+          localStorage.setItem("streakLog", JSON.stringify(log.slice(-30)))
+        }
         setStreak(computeStreakFromDates(getStreak()))
+      } else {
+        const log = getStreak()
+        const todayStr = new Date().toDateString()
+        if (!log.includes(todayStr)) {
+          log.push(todayStr)
+          localStorage.setItem("streakLog", JSON.stringify(log.slice(-30)))
+        }
       }
     }
     window.addEventListener("proteinUpdate", handler)
     return () => window.removeEventListener("proteinUpdate", handler)
-  }, [isLoggedIn, token])
+  }, [isLoggedIn])
 
   const logMealToAccount = (mealData) => {
     return fetch(`${API}/users/history`, {
@@ -208,15 +203,15 @@ function ProteinTracker() {
         fats: chosen.fats,
         serving: chosen.serving,
       })
-        .then(() => loadAccountConsumed())
+        .then(() => refreshUserData())
         .catch((err) => console.error("Failed to log meal:", err))
     } else {
-      const existing = meals.findIndex(m => m.name === chosen.name)
+      const existing = guestMeals.findIndex(m => m.name === chosen.name)
       let updated
       if (existing >= 0) {
-        updated = meals.map((m, i) => i === existing ? { ...m, qty: (m.qty || 1) + 1 } : m)
+        updated = guestMeals.map((m, i) => i === existing ? { ...m, qty: (m.qty || 1) + 1 } : m)
       } else {
-        updated = [...meals, {
+        updated = [...guestMeals, {
           name: chosen.name,
           protein: chosen.protein,
           calories: chosen.calories,
@@ -227,10 +222,10 @@ function ProteinTracker() {
           qty: 1,
         }]
       }
-      setMeals(updated)
+      setGuestMeals(updated)
       localStorage.setItem("mealLog", JSON.stringify(updated))
-      const newConsumed = consumed + chosen.protein
-      setConsumed(newConsumed)
+      const newConsumed = guestConsumed + chosen.protein
+      setGuestConsumed(newConsumed)
       localStorage.setItem("proteinConsumed", String(newConsumed))
     }
 
@@ -250,14 +245,14 @@ function ProteinTracker() {
         fats: meal.fats,
         serving: meal.serving,
       })
-        .then(() => loadAccountConsumed())
+        .then(() => refreshUserData())
         .catch((err) => console.error("Failed to log meal:", err))
     } else {
-      const updated = meals.map((m, i) => i === index ? { ...m, qty: (m.qty || 1) + 1 } : m)
-      setMeals(updated)
+      const updated = guestMeals.map((m, i) => i === index ? { ...m, qty: (m.qty || 1) + 1 } : m)
+      setGuestMeals(updated)
       localStorage.setItem("mealLog", JSON.stringify(updated))
-      const newConsumed = consumed + meal.protein
-      setConsumed(newConsumed)
+      const newConsumed = guestConsumed + meal.protein
+      setGuestConsumed(newConsumed)
       localStorage.setItem("proteinConsumed", String(newConsumed))
     }
 
@@ -268,27 +263,26 @@ function ProteinTracker() {
     const meal = meals[index]
 
     if (isLoggedIn) {
-      // Delete the most recently logged entry from this group in MongoDB.
       const entryId = meal.entryIds?.[meal.entryIds.length - 1]
       if (!entryId) return
       fetch(`${API}/users/history/${entryId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(() => loadAccountConsumed())
+        .then(() => refreshUserData())
         .catch((err) => console.error("Failed to remove meal:", err))
     } else {
       const qty = meal.qty || 1
       let updated
       if (qty > 1) {
-        updated = meals.map((m, i) => i === index ? { ...m, qty: qty - 1 } : m)
+        updated = guestMeals.map((m, i) => i === index ? { ...m, qty: qty - 1 } : m)
       } else {
-        updated = meals.filter((_, i) => i !== index)
+        updated = guestMeals.filter((_, i) => i !== index)
       }
-      setMeals(updated)
+      setGuestMeals(updated)
       localStorage.setItem("mealLog", JSON.stringify(updated))
-      const newConsumed = Math.max(0, consumed - meal.protein)
-      setConsumed(newConsumed)
+      const newConsumed = Math.max(0, guestConsumed - meal.protein)
+      setGuestConsumed(newConsumed)
       localStorage.setItem("proteinConsumed", String(newConsumed))
     }
 
@@ -313,7 +307,6 @@ function ProteinTracker() {
     localStorage.setItem("proteinAdded", "[]")
 
     if (isLoggedIn) {
-      // Clear every meal entry currently shown, one delete per database row.
       const allIds = meals.flatMap((m) => m.entryIds || [])
       Promise.all(
         allIds.map((id) =>
@@ -323,11 +316,11 @@ function ProteinTracker() {
           })
         )
       )
-        .then(() => loadAccountConsumed())
+        .then(() => refreshUserData())
         .catch((err) => console.error("Failed to reset meals:", err))
     } else {
-      setMeals([])
-      setConsumed(0)
+      setGuestMeals([])
+      setGuestConsumed(0)
       localStorage.setItem("mealLog", "[]")
       localStorage.setItem("proteinConsumed", "0")
     }
@@ -337,8 +330,6 @@ function ProteinTracker() {
 
   const saveProteinGoal = (val) => {
     const g = Math.max(1, Math.round(val))
-    setGoal(g)
-    localStorage.setItem("proteinGoal", String(g))
     if (isLoggedIn) {
       fetch(`${API}/users/goal`, {
         method: "PUT",
@@ -347,7 +338,12 @@ function ProteinTracker() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ proteinGoal: g }),
-      }).catch((err) => console.error("Failed to update goal:", err))
+      })
+        .then(() => refreshUserData())
+        .catch((err) => console.error("Failed to update goal:", err))
+    } else {
+      setGuestGoal(g)
+      localStorage.setItem("proteinGoal", String(g))
     }
     setEditingGoal(null)
   }
@@ -364,6 +360,22 @@ function ProteinTracker() {
     setWaterGoal(g)
     localStorage.setItem("waterGoal", String(g))
     setEditingGoal(null)
+  }
+
+  if (loading) {
+    return (
+      <section className="tracker-section" id="tracker-section">
+        <div className="tracker-section-header">
+          <span className="section-badge">📊 Daily Tracking</span>
+          <h2 className="section-title">Track Every Gram</h2>
+        </div>
+        <div className="tracker-layout">
+          <div className="tracker-main-card" style={{ minHeight: 400 }}>
+            <p className="tracker-empty">Loading your progress...</p>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
