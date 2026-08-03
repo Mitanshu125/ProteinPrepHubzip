@@ -3550,3 +3550,13 @@ body { padding: 0; }
   font-size: 17px;
   margin-bottom: 10px;
 }
+
+.auth-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.auth-forgot-link {
+  font-size: 0.85rem;
+  color: #c9943a;
+}

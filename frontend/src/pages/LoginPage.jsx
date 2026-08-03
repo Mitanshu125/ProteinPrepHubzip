@@ -77,7 +77,10 @@ function LoginPage() {
               />
             </div>
 
-            <label>Password</label>
+            <div className="auth-label-row">
+              <label>Password</label>
+              <Link to="/account-recovery" className="auth-forgot-link">Forgot password?</Link>
+            </div>
             <div className="password-field">
               <span className="input-icon">🔒</span>
               <input
