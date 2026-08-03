@@ -18,6 +18,8 @@ const userSchema = new mongoose.Schema({
   proteinGoal: { type: Number, default: 160 },
   savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }],
   mealHistory: [mealHistorySchema],
+  resetPasswordToken: { type: String, select: false },
+  resetPasswordExpires: { type: Date, select: false },
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);
