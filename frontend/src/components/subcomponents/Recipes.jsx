@@ -131,14 +131,14 @@ function Recipes({recipes}) {
   const [guestTodayLog, setGuestTodayLog] = useState({})
 
   const loadGuestTodayLog = () => {
-    const added = JSON.parse(localStorage.getItem("proteinAdded") || "[]")
-    const map = {}
-    added.filter((entry) => isToday(entry.date)).forEach((entry) => {
-      if (!map[entry.id]) map[entry.id] = { qty: 0 }
-      map[entry.id].qty += 1
-    })
-    setGuestTodayLog(map)
-  }
+  const mealLog = JSON.parse(localStorage.getItem("mealLog") || "[]")
+  const map = {}
+  mealLog.forEach((m) => {
+    if (!m.recipeId) return
+    map[m.recipeId] = { qty: m.qty || 1 }
+  })
+  setGuestTodayLog(map)
+}
 
   useEffect(() => {
     if (!isLoggedIn) loadGuestTodayLog()
@@ -193,7 +193,7 @@ function Recipes({recipes}) {
     }
   };
 
-  const addToDay = async (e, element) => {
+ const addToDay = async (e, element) => {
     e.preventDefault();
     e.stopPropagation();
     const protein = element.nutrition?.protein || 0;
@@ -224,14 +224,36 @@ function Recipes({recipes}) {
         console.error("Failed to log meal:", err);
       }
     } else {
-      const added = JSON.parse(localStorage.getItem("proteinAdded") || "[]");
-      added.push({ id: element.id, protein, date: new Date().toISOString() });
-      localStorage.setItem("proteinAdded", JSON.stringify(added));
+      const mealLog = JSON.parse(localStorage.getItem("mealLog") || "[]");
+      const existing = mealLog.findIndex((m) => m.recipeId === element.id);
+      let updatedLog;
+      if (existing >= 0) {
+        updatedLog = mealLog.map((m, i) =>
+          i === existing ? { ...m, qty: (m.qty || 1) + 1 } : m
+        );
+      } else {
+        updatedLog = [
+          ...mealLog,
+          {
+            recipeId: element.id,
+            name: element.title,
+            protein,
+            calories,
+            carbs,
+            fats,
+            serving: element.cookingTime || "",
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            qty: 1,
+          },
+        ];
+      }
+      localStorage.setItem("mealLog", JSON.stringify(updatedLog));
+      const total = updatedLog.reduce((sum, m) => sum + (m.protein || 0) * (m.qty || 1), 0);
+      localStorage.setItem("proteinConsumed", String(total));
       loadGuestTodayLog();
     }
     window.dispatchEvent(new Event("proteinUpdate"));
   };
-
   const removeFromDay = async (e, element) => {
     e.preventDefault();
     e.stopPropagation();
@@ -251,13 +273,19 @@ function Recipes({recipes}) {
         console.error("Failed to remove meal:", err);
       }
     } else {
-      const added = JSON.parse(localStorage.getItem("proteinAdded") || "[]");
-      const idx = [...added].reverse().findIndex((a) => a.id === element.id && isToday(a.date));
-      if (idx !== -1) {
-        const realIdx = added.length - 1 - idx;
-        added.splice(realIdx, 1);
-        localStorage.setItem("proteinAdded", JSON.stringify(added));
+      const mealLog = JSON.parse(localStorage.getItem("mealLog") || "[]");
+      const idx = mealLog.findIndex((m) => m.recipeId === element.id);
+      if (idx === -1) return;
+      const qty = mealLog[idx].qty || 1;
+      let updatedLog;
+      if (qty > 1) {
+        updatedLog = mealLog.map((m, i) => i === idx ? { ...m, qty: qty - 1 } : m);
+      } else {
+        updatedLog = mealLog.filter((_, i) => i !== idx);
       }
+      localStorage.setItem("mealLog", JSON.stringify(updatedLog));
+      const total = updatedLog.reduce((sum, m) => sum + (m.protein || 0) * (m.qty || 1), 0);
+      localStorage.setItem("proteinConsumed", String(total));
       loadGuestTodayLog();
     }
     window.dispatchEvent(new Event("proteinUpdate"));

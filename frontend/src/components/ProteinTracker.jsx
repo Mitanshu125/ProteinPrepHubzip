@@ -160,6 +160,7 @@ function ProteinTracker() {
       if (!isLoggedIn) {
         const c = parseInt(localStorage.getItem("proteinConsumed") || "0")
         setGuestConsumed(c)
+        setGuestMeals(JSON.parse(localStorage.getItem("mealLog") || "[]"))
         const log = getStreak()
         const todayStr = new Date().toDateString()
         if (!log.includes(todayStr)) {
@@ -224,9 +225,9 @@ function ProteinTracker() {
       }
       setGuestMeals(updated)
       localStorage.setItem("mealLog", JSON.stringify(updated))
-      const newConsumed = guestConsumed + chosen.protein
-      setGuestConsumed(newConsumed)
-      localStorage.setItem("proteinConsumed", String(newConsumed))
+      const total = updated.reduce((sum, m) => sum + (m.protein || 0) * (m.qty || 1), 0)
+      setGuestConsumed(total)
+      localStorage.setItem("proteinConsumed", String(total))
     }
 
     window.dispatchEvent(new Event("proteinUpdate"))
@@ -251,9 +252,9 @@ function ProteinTracker() {
       const updated = guestMeals.map((m, i) => i === index ? { ...m, qty: (m.qty || 1) + 1 } : m)
       setGuestMeals(updated)
       localStorage.setItem("mealLog", JSON.stringify(updated))
-      const newConsumed = guestConsumed + meal.protein
-      setGuestConsumed(newConsumed)
-      localStorage.setItem("proteinConsumed", String(newConsumed))
+      const total = updated.reduce((sum, m) => sum + (m.protein || 0) * (m.qty || 1), 0)
+      setGuestConsumed(total)
+      localStorage.setItem("proteinConsumed", String(total))
     }
 
     window.dispatchEvent(new Event("proteinUpdate"))
@@ -281,9 +282,9 @@ function ProteinTracker() {
       }
       setGuestMeals(updated)
       localStorage.setItem("mealLog", JSON.stringify(updated))
-      const newConsumed = Math.max(0, guestConsumed - meal.protein)
-      setGuestConsumed(newConsumed)
-      localStorage.setItem("proteinConsumed", String(newConsumed))
+      const total = updated.reduce((sum, m) => sum + (m.protein || 0) * (m.qty || 1), 0)
+      setGuestConsumed(total)
+      localStorage.setItem("proteinConsumed", String(total))
     }
 
     window.dispatchEvent(new Event("proteinUpdate"))
