@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 function ResetPasswordPage() {
@@ -11,8 +11,18 @@ function ResetPasswordPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [validToken, setValidToken] = useState(false);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/verify-reset-token/${token}`)
+      .then((res) => res.json())
+      .then((data) => setValidToken(!!data.valid))
+      .catch(() => setValidToken(false))
+      .finally(() => setChecking(false));
+  }, [token]);
+  
+    const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -64,7 +74,23 @@ function ResetPasswordPage() {
         </div>
 
         <div className="auth-form-panel">
-          {success ? (
+          {checking ? (
+            <div className="auth-form">
+              <h2>Checking link...</h2>
+              <p className="auth-form-sub">One moment.</p>
+            </div>
+          ) : !validToken ? (
+            <div className="auth-form reset-expired-panel">
+              <div className="reset-expired-icon">⚠️</div>
+              <h2>Link Expired</h2>
+              <p className="auth-error auth-error-block">
+                This password reset link is invalid or has expired. Reset links are only valid for 30 minutes.
+              </p>
+              <Link to="/account-recovery" className="auth-submit-btn reset-expired-btn">
+                Request a New Link
+              </Link>
+            </div>
+          ) : success ? (
             <div className="auth-form">
               <h2>Password updated</h2>
               <p className="auth-form-sub">Redirecting you to login...</p>

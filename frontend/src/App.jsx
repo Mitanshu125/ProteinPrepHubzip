@@ -20,7 +20,7 @@ import SignupPage from "./pages/SignupPage"
 import ProfilePage from "./pages/ProfilePage"
 import ProtectedRoute from "./components/ProtectedRoute"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
-import ResetPasswordPage from "./pages/ResetPasswordPage"
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx"
 
 function RouteScrollToTop() {
   const { pathname } = useLocation()
@@ -62,7 +62,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/account-recovery" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/reset-account/:token" element={<ResetPasswordPage />} />
         <Route path="/profile" element={
           <ProtectedRoute>
             <ProfilePage />
