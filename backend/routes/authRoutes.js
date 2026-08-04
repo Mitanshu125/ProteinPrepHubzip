@@ -116,6 +116,22 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
+// VERIFY RESET TOKEN (checked on page load, before the user submits anything)
+router.get("/verify-reset-token/:token", async (req, res) => {
+  try {
+    const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    }).select("+resetPasswordToken +resetPasswordExpires");
+
+    res.json({ valid: !!user });
+  } catch (error) {
+    res.status(500).json({ valid: false });
+  }
+});
+
 // RESET PASSWORD
 router.post("/reset-password/:token", async (req, res) => {
   try {
