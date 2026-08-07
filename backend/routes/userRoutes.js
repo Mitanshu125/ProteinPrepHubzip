@@ -56,10 +56,12 @@ router.post("/favourites/:recipeId", protect, async (req, res) => {
 router.post("/history", protect, async (req, res) => {
   try {
     const { recipe, title, protein, calories, carbs, fats, serving } = req.body;
-    const user = await User.findById(req.userId);
 
-    user.mealHistory.push({ recipe, title, protein, calories, carbs, fats, serving });
-    await user.save();
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { $push: { mealHistory: { recipe, title, protein, calories, carbs, fats, serving } } },
+      { new: true }
+    ).select("mealHistory");
 
     res.json({ mealHistory: user.mealHistory });
   } catch (error) {
@@ -70,11 +72,11 @@ router.post("/history", protect, async (req, res) => {
 // DELETE one specific meal entry (used by the "-" button)
 router.delete("/history/:entryId", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
-    user.mealHistory = user.mealHistory.filter(
-      (m) => m._id.toString() !== req.params.entryId
-    );
-    await user.save();
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { $pull: { mealHistory: { _id: req.params.entryId } } },
+      { new: true }
+    ).select("mealHistory");
     res.json({ mealHistory: user.mealHistory });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
