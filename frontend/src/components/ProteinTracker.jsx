@@ -246,7 +246,7 @@ function ProteinTracker() {
         fats: meal.fats,
         serving: meal.serving,
       })
-        .then(() => refreshUserData())
+        
         .catch((err) => console.error("Failed to log meal:", err))
     } else {
       const updated = guestMeals.map((m, i) => i === index ? { ...m, qty: (m.qty || 1) + 1 } : m)
@@ -270,7 +270,7 @@ function ProteinTracker() {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(() => refreshUserData())
+       
         .catch((err) => console.error("Failed to remove meal:", err))
     } else {
       const qty = meal.qty || 1
@@ -317,7 +317,7 @@ function ProteinTracker() {
           })
         )
       )
-        .then(() => refreshUserData())
+        
         .catch((err) => console.error("Failed to reset meals:", err))
     } else {
       setGuestMeals([])
@@ -340,7 +340,7 @@ function ProteinTracker() {
         },
         body: JSON.stringify({ proteinGoal: g }),
       })
-        .then(() => refreshUserData())
+        
         .catch((err) => console.error("Failed to update goal:", err))
     } else {
       setGuestGoal(g)

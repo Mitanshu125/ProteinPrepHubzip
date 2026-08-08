@@ -187,7 +187,7 @@ function Recipes({recipes}) {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-      await refreshUserData();
+    
     } catch (err) {
       console.error("Failed to update favourite:", err);
     }
@@ -219,7 +219,6 @@ function Recipes({recipes}) {
             serving: element.cookingTime || "",
           }),
         });
-        await refreshUserData();
       } catch (err) {
         console.error("Failed to log meal:", err);
       }
@@ -268,7 +267,7 @@ function Recipes({recipes}) {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
-        await refreshUserData();
+        
       } catch (err) {
         console.error("Failed to remove meal:", err);
       }
